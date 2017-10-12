@@ -15,20 +15,25 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+import pickle
 
 A = numpy.loadtxt('data/tictac_final.txt')
 X = A[:, :9]
 Y = A[:, 9:]
 
-model_knn = KNeighborsClassifier()
+model_mlpc = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
 valdation_size = 0.20
 X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(
     X, Y, test_size=valdation_size)
 print(type(X_train))
 print(type(Y_train))
-model_knn.fit(X_train, Y_train.ravel())
+model_mlpc.fit(X_train, Y_train.ravel())
 
-Y_prediction = model_knn.predict(X_validation)
+filename = 'data/model_mlpc_final.sav'
+pickle.dump(model_mlpc, open(filename, 'wb'))
+
+Y_prediction = model_mlpc.predict(X_validation)
 print(Y_prediction)
 
 print(accuracy_score(Y_validation, Y_prediction))
